@@ -1,0 +1,36 @@
+*{
+	box-sizing: border-box;
+}
+header{
+	background-color: navy;
+	margin-bottom: 2em;
+}
+body{
+	padding: 0;
+	margin: 0;
+	width: 100vw;
+	background-color: rgb(5, 22, 52);
+	color:aliceblue;
+}
+.pages-container
+{
+	background-color: rgb(65, 25, 158);
+	padding: 1em;
+}
+.flex-box{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 80%;
+	margin:0 auto;
+}
+.pages-container a{
+	text-decoration: none;
+	color: lightblue;
+}
+.pages-container a:hover
+{
+	text-decoration: none;
+	color: red;
+}
