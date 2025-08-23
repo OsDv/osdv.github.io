@@ -16,6 +16,8 @@ body{
 {
 	background-color: #024d2d;
 	padding: 1em;
+	border-radius: 10px;
+	padding: 10px;
 }
 .flex-box{
 	display: flex;
@@ -28,9 +30,19 @@ body{
 .pages-container a{
 	text-decoration: none;
 	color: #7fffd4;
+	
 }
 .pages-container a:hover
 {
 	text-decoration: none;
 	color: #00ff88;
+}
+.pages-container h3 
+{
+	font-weight:500;
+	font-size: 1.5em;
+}
+.pages-container ul
+{
+	padding: 10px;
 }
