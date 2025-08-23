@@ -2,19 +2,19 @@
 	box-sizing: border-box;
 }
 header{
-	background-color: navy;
+background-color: #013220;
 	margin-bottom: 2em;
 }
 body{
 	padding: 0;
 	margin: 0;
 	width: 100vw;
-	background-color: rgb(5, 22, 52);
-	color:aliceblue;
+	background-color: #021a10;
+	color: #b6f2c2;
 }
 .pages-container
 {
-	background-color: rgb(65, 25, 158);
+	background-color: #024d2d;
 	padding: 1em;
 }
 .flex-box{
@@ -27,10 +27,10 @@ body{
 }
 .pages-container a{
 	text-decoration: none;
-	color: lightblue;
+	color: #7fffd4;
 }
 .pages-container a:hover
 {
 	text-decoration: none;
-	color: red;
+	color: #00ff88;
 }
