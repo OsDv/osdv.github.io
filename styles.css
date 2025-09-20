@@ -17,15 +17,24 @@ body {
   --links-decoration-color: #14B6EF;
   --hover-links-decoration-color: #14051A;
   --active-links-decoration-color: #A82016;
+  --background-color: #07553B;
 
   font-family: "GoogleSansCode";
   padding: 0;
   margin: 0 auto;
   margin-top: 3em;
   width: min(500px, 80vw);
-  background-color: #07553B;
+  background-color: var(--background-color);
   color: var(--main-text-color);
   font-size: 18px;
+}
+
+.dark-theme {
+  --main-text-color: #354735;
+  --links-decoration-color: #0077cc;
+  --hover-links-decoration-color: #5a1a63;
+  --active-links-decoration-color: #c73b2a;
+  --background-color: #e7f2ec;
 }
 
 .logo {
@@ -111,4 +120,18 @@ a {
 
 small {
   font-size: 0.8rem;
+}
+
+.theme-toggle-button {
+  height: 50px;
+  width: 50px;
+  background-color: var(--main-text-color);
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+}
+
+.theme-toggle-button img {
+  width: 100%;
+  height: 100%;
 }
