@@ -135,3 +135,32 @@ small {
   width: 100%;
   height: 100%;
 }
+
+.badge-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+
+.badge-list a {
+  display: inline-block;
+  transition: transform 0.2s ease-in-out;
+  text-decoration: none;
+}
+
+.badge-list a:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.badge-icon {
+  width: 120px;
+  height: auto;
+  display: block;
+}
+
+footer {
+  margin-top: 20px;
+}
