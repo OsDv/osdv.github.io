@@ -1,7 +1,13 @@
 // https://dl.acm.org/doi/10.1145/1073204.1073251
+function cssVar(name) {
+    return getComputedStyle(document.body)
+        .getPropertyValue(name)
+        .trim();
+}
 //consts
+
 const auxinsRate = 10;
-const VEIN_COLOR = "green";
+let VEIN_COLOR = cssVar("--leaf-venation-color");
 const AUXIN_COLOR = "red";
 const BIRTH_DISTANCE = 20;
 const AUXIN_RADIUS = 10;
@@ -9,11 +15,16 @@ const VEIN_RADIUS = 2;
 const COLONIE_LIFESPAN = 1500; // ms
 
 // 
+function cssVar(name) {
+    return getComputedStyle(document.body)
+        .getPropertyValue(name)
+        .trim();
+}
 const mouse = {
     x: 0,
     y: 0
 };
-var c = document.getElementById("myCanvas");
+var c = document.getElementById("bg-canvas");
 var ctx = c.getContext("2d");
 document.addEventListener("mousemove", (e) => {
     const pos = getMousePos(c, e);
@@ -142,12 +153,13 @@ function getMousePos(canvas, evt) {
 }
 function drawFrame()
 {
+    VEIN_COLOR = cssVar("--leaf-venation-color");
     let newColonie = {auxins:[],veins:[new Vein(mouse.x,mouse.y,VEIN_COLOR)],birth:Date.now()};
     sprayAuxins(newColonie)
     removeCloseAuxins(newColonie);
     colonies.push(newColonie);
     let dead = [];
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = cssVar("--background-color");
     ctx.fillRect(0, 0, c.width, c.height);
     colonies.forEach((c,i)=>{
 	let age = Date.now() - c.birth;
