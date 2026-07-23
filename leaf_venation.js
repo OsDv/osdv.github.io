@@ -3,11 +3,32 @@
 const auxinsRate = 10;
 const VEIN_COLOR = "green";
 const AUXIN_COLOR = "red";
-const BIRTH_DISTANCE = 30;
+const BIRTH_DISTANCE = 20;
 const AUXIN_RADIUS = 10;
-const VEIN_RADIUS = 5;
+const VEIN_RADIUS = 2;
+const COLONIE_LIFESPAN = 1500; // ms
+
+// 
+const mouse = {
+    x: 0,
+    y: 0
+};
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
+document.addEventListener("mousemove", (e) => {
+    const pos = getMousePos(c, e);
+    mouse.x = pos.x;
+    mouse.y = pos.y;
+});
+function resizeCanvas() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// 
 class Auxin{
     constructor(x, y,color) {
 	this.x= x;
@@ -44,18 +65,21 @@ class Vein{
 	ctx.fill();
     }
 }
-//colonies = [{auxins:[],veins=[new Vein(300,300,VEIN_COLOR)]}]
-let auxins = [];
-let veins = [new Vein(300,300,VEIN_COLOR)];
-function sprayAuxins()
+colonies = [{auxins:[],veins:[new Vein(300,300,VEIN_COLOR)],birth:Date.now()}]
+//let auxins = [];
+//let veins = [new Vein(300,300,VEIN_COLOR)];
+function sprayAuxins(colonie)
 {
+    let auxins = colonie.auxins;
     for (let i = 0; i < auxinsRate; i++) {
 	x = Math.random()*c.width;
 	y = Math.random()*c.height;
 	auxins.push(new Auxin(x,y,AUXIN_COLOR));
     }
 }
-function removeCloseAuxins(){
+function removeCloseAuxins(colonie){
+    let auxins = colonie.auxins;
+    let veins = colonie.veins;
     let indices =[];
     auxins.forEach((a,i)=>{
 	veins.forEach((v)=>{
@@ -67,8 +91,10 @@ function removeCloseAuxins(){
     })
     indices.forEach((i)=>{auxins.splice(i,1)});
 }
-function setGrowDirections()
+function setGrowDirections(colonie)
 {
+    let auxins = colonie.auxins;
+    let veins = colonie.veins;
     auxins.forEach((a,i)=>{
 	target = veins[0];
 	targetDistance = Math.sqrt((a.x-veins[0].x)*(a.x-veins[0].x)+(a.y-veins[0].y)*(a.y-veins[0].y));
@@ -93,31 +119,57 @@ function setGrowDirections()
 	})
     })
 }
-function growNewVeins()
+function growNewVeins(colonie)
 {
+    let veins = colonie.veins;
     newVeins = [];
     veins.forEach((v)=>{
-	if (v.direction.x!=0 || v.direction.y!=0)newVeins.push(new Vein(v.x+v.direction.x*VEIN_RADIUS*2,v.y+v.direction.y*VEIN_RADIUS*2,VEIN_COLOR));
+	if (v.direction.x!=0 || v.direction.y!=0)newVeins.push(new Vein(v.x+v.direction.x*VEIN_RADIUS,v.y+v.direction.y*VEIN_RADIUS,VEIN_COLOR));
     })
-    veins = [...veins,...newVeins];
+    colonie.veins = [...veins,...newVeins];
 }
-sprayAuxins();
-removeCloseAuxins();
-auxins.forEach((auxin)=>{auxin.draw(ctx);});
-veins.forEach((auxin)=>{auxin.draw(ctx);});
 
-window.addEventListener('keydown', (event) => {
-  //console.log(`Key pressed: ${event.key} | Physical code: ${event.code}`);
-  
-  // Example: Check for specific keys
-  if (event.key === ' ') {
-      setGrowDirections();
-      growNewVeins();
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, c.width, c.height);
-      sprayAuxins();
-      removeCloseAuxins();
-      //auxins.forEach((auxin)=>{auxin.draw(ctx);});
-      veins.forEach((vein)=>{vein.draw(ctx);});
-  }
-});
+sprayAuxins(colonies[0])
+removeCloseAuxins(colonies[0]);
+
+// <https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas>
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: (evt.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+        y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+    };
+}
+function drawFrame()
+{
+    let newColonie = {auxins:[],veins:[new Vein(mouse.x,mouse.y,VEIN_COLOR)],birth:Date.now()};
+    sprayAuxins(newColonie)
+    removeCloseAuxins(newColonie);
+    colonies.push(newColonie);
+    let dead = [];
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, c.width, c.height);
+    colonies.forEach((c,i)=>{
+	let age = Date.now() - c.birth;
+	if (age>COLONIE_LIFESPAN) dead.push(i);
+	setGrowDirections(c);
+	growNewVeins(c);
+	sprayAuxins(c);
+	removeCloseAuxins(c);
+	c.veins.forEach((vein)=>{vein.draw(ctx);});
+    })
+    dead.forEach((i)=>{
+	colonies.splice(i,1);
+	console.log("Diesd");
+    })
+    requestAnimationFrame(drawFrame);
+}
+drawFrame();
+
+// window.addEventListener('keydown', (event) => {
+//   //console.log(`Key pressed: ${event.key} | Physical code: ${event.code}`);
+//   // Example: Check for specific keys
+//   if (event.key === ' ') {
+//       drawFrame();
+//   }
+// });
