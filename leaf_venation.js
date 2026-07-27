@@ -11,8 +11,9 @@ let VEIN_COLOR = cssVar("--leaf-venation-color");
 const AUXIN_COLOR = "red";
 const BIRTH_DISTANCE = 20;
 const AUXIN_RADIUS = 10;
-const VEIN_RADIUS = 2;
+const VEIN_RADIUS = 5;
 const COLONIE_LIFESPAN = 1500; // ms
+const VEIN_WIDTH = 5;
 
 // 
 function cssVar(name) {
@@ -62,21 +63,38 @@ class Vein{
     constructor(x, y,color) {
 	this.x= x;
 	this.y= y;
+	this.children = [];
 	this.color=color;
 	this.direction;
 	this.watchers = [];
     }
     // Method
-    draw(ctx) {
+    draw(ctx,width=VEIN_WIDTH) {
 	//ctx.fillRect(this.x,this.y, AUXIN_RADIUS, AUXIN_RADIUS);
 	ctx.beginPath();
 
-	ctx.arc(this.x,this.y,VEIN_RADIUS,0,2*Math.PI);
-	ctx.fillStyle= this.color;
-	ctx.fill();
+	ctx.moveTo(this.x,this.y);
+	this.children.forEach((c)=>{
+	    ctx.lineTo(c.x,c.y);
+	    ctx.strokeStyle = VEIN_COLOR; // Red color
+	    ctx.lineWidth = width;           // 5 pixels thick
+	    ctx.stroke();
+
+	    c.draw(ctx,width*0.95);
+	});
+
+    }
+
+    getArray()
+    {
+	let arr = [this];
+	this.children.forEach((c)=>{
+	    arr = [...arr,...c.getArray()];
+	})
+	return arr;
     }
 }
-colonies = [{auxins:[],veins:[new Vein(300,300,VEIN_COLOR)],birth:Date.now()}]
+colonies = [{auxins:[],root:new Vein(300,300,VEIN_COLOR),birth:Date.now()}]
 //let auxins = [];
 //let veins = [new Vein(300,300,VEIN_COLOR)];
 function sprayAuxins(colonie)
@@ -90,7 +108,7 @@ function sprayAuxins(colonie)
 }
 function removeCloseAuxins(colonie){
     let auxins = colonie.auxins;
-    let veins = colonie.veins;
+    let veins = colonie.root.getArray();
     let indices =[];
     auxins.forEach((a,i)=>{
 	veins.forEach((v)=>{
@@ -105,7 +123,7 @@ function removeCloseAuxins(colonie){
 function setGrowDirections(colonie)
 {
     let auxins = colonie.auxins;
-    let veins = colonie.veins;
+    let veins = colonie.root.getArray();
     auxins.forEach((a,i)=>{
 	target = veins[0];
 	targetDistance = Math.sqrt((a.x-veins[0].x)*(a.x-veins[0].x)+(a.y-veins[0].y)*(a.y-veins[0].y));
@@ -132,12 +150,10 @@ function setGrowDirections(colonie)
 }
 function growNewVeins(colonie)
 {
-    let veins = colonie.veins;
-    newVeins = [];
+    let veins = colonie.root.getArray();
     veins.forEach((v)=>{
-	if (v.direction.x!=0 || v.direction.y!=0)newVeins.push(new Vein(v.x+v.direction.x*VEIN_RADIUS,v.y+v.direction.y*VEIN_RADIUS,VEIN_COLOR));
+	if (v.direction.x!=0 || v.direction.y!=0)v.children.push(new Vein(v.x+v.direction.x*VEIN_RADIUS,v.y+v.direction.y*VEIN_RADIUS,VEIN_COLOR));
     })
-    colonie.veins = [...veins,...newVeins];
 }
 
 sprayAuxins(colonies[0])
@@ -154,7 +170,7 @@ function getMousePos(canvas, evt) {
 function drawFrame()
 {
     VEIN_COLOR = cssVar("--leaf-venation-color");
-    let newColonie = {auxins:[],veins:[new Vein(mouse.x,mouse.y,VEIN_COLOR)],birth:Date.now()};
+    let newColonie = {auxins:[],root:new Vein(mouse.x,mouse.y,VEIN_COLOR),birth:Date.now()};
     sprayAuxins(newColonie)
     removeCloseAuxins(newColonie);
     colonies.push(newColonie);
@@ -168,7 +184,7 @@ function drawFrame()
 	growNewVeins(c);
 	sprayAuxins(c);
 	removeCloseAuxins(c);
-	c.veins.forEach((vein)=>{vein.draw(ctx);});
+	c.root.draw(ctx);
     })
     dead.forEach((i)=>{
 	colonies.splice(i,1);
