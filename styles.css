@@ -18,7 +18,7 @@ body {
   --hover-links-decoration-color: #14051A;
   --active-links-decoration-color: #A82016;
   --background-color: #07553B;
-  --leaf-venation-color:var(--links-decoration-color);
+  --leaf-venation-color: var(--links-decoration-color);
 
   font-family: "GoogleSansCode";
   padding: 0;
@@ -37,7 +37,7 @@ body {
   --hover-links-decoration-color: #5a1a63;
   --active-links-decoration-color: #c73b2a;
   --background-color: #e7f2ec;
-  }
+}
 
 .logo {
   font-size: 2rem;
@@ -45,12 +45,17 @@ body {
   margin-bottom: 2rem;
   position: relative;
 }
-body:has(.logo:hover,h2:hover,li:hover) {
-    --leaf-venation-color: var(--hover-links-decoration-color);
+
+body:has(.logo:hover, h2:hover, li:hover) {
+  --leaf-venation-color: var(--hover-links-decoration-color);
+  --trigger-prop: var(--leaf-color-change);
 }
-body:has(.logo:active,h2:active,li:active) {
-    --leaf-venation-color: var(--active-links-decoration-color);
+
+body:has(.logo:active, h2:active, li:active) {
+  --leaf-venation-color: var(--active-links-decoration-color);
+  --trigger-prop: var(--leaf-color-change);
 }
+
 :is(.logo, h2, li)::before {
   content: "";
   display: inline-block;
@@ -172,12 +177,11 @@ footer {
   margin-top: 20px;
 }
 
-#bg-canvas
-{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
 }
